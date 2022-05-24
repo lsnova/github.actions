@@ -1,0 +1,4 @@
+{
+  "name": "build frontend docker image",
+  "description": "docker frontend - node 16"
+}

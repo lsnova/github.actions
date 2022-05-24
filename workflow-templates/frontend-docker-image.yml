@@ -1,0 +1,75 @@
+name: Docker Image CI
+
+on:
+  workflow_dispatch:
+    inputs:
+      tag_as_latest:
+        description: 'tag as latest?'
+        required: true
+        type: boolean
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+      with:
+        persist-credentials: false
+    - uses: actions/setup-node@v3
+      with:
+        node-version: 16
+        cache: 'npm'
+    - name: environment variables
+      run: |
+        echo "REPOSITORY_NAME=lsnova/animalhelper.web" >> $GITHUB_ENV
+        echo "GIT_COMMIT=$(git rev-parse HEAD)" >> $GITHUB_ENV
+        echo "BUILD_DATE=$(date  +%F\ %T\ %Z)" >> $GITHUB_ENV
+        echo "DOCKER_VERSION=1.$(date +%y.%j.%H%M%S)" >> $GITHUB_ENV
+      shell: bash
+    - name: create version.json
+      run: |
+        echo "{\"gitCommit\":\"$GIT_COMMIT\",\"buildDate\":\"$BUILD_DATE\",\"dockerVersion\":\"$DOCKER_VERSION\"}" > ./src/assets/version.json
+    - name: npm install
+      run: |
+        npm install
+    - name: ng build
+      run: |
+        ./node_modules/.bin/ng build --prod
+    - name: docker login
+      env:
+          DOCKER_USER: ${{secrets.DOCKER_USER}}
+          DOCKER_PASSWORD: ${{secrets.DOCKER_PASSWORD}}
+      run: |
+          docker login -u $DOCKER_USER -p $DOCKER_PASSWORD
+    - name: build docker image
+      run: |
+        docker build . --file ./Dockerfile --tag $REPOSITORY_NAME:$DOCKER_VERSION
+    - name: docker push image
+      run: |
+        docker push $REPOSITORY_NAME:$DOCKER_VERSION
+    - name: push latest image
+      if: ${{ github.event.inputs.tag_as_latest == 'true' }}
+      run: |
+        docker tag $REPOSITORY_NAME:$DOCKER_VERSION $REPOSITORY_NAME:latest
+        docker push $REPOSITORY_NAME:latest
+    - name: create tag
+      uses: actions/github-script@v5
+      with:
+        script: |
+          github.rest.git.createRef({
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            ref: 'refs/tags/build_${{ env.DOCKER_VERSION }}',
+            sha: context.sha
+          })
+    - name: Slack Notification
+      uses: rtCamp/action-slack-notify@v2
+      if: always()
+      env:
+        SLACK_WEBHOOK: ${{secrets.SLACK_WEBHOOK}}
+        SLACK_COLOR: ${{ job.status }}
+        SLACK_ICON: https://github.com/lsnova.png?size=48
+        SLACK_MESSAGE: ${{ env.REPOSITORY_NAME }}:${{ env.DOCKER_VERSION }} - ${{ job.status }}
+        SLACK_FOOTER: lsn
+        SLACK_TITLE: 'Docker Image Build'
+        SLACK_USERNAME: github
