@@ -3,6 +3,10 @@ name: Docker Image CI
 on:
   workflow_dispatch:
     inputs:
+      repository:
+        description: 'repository'
+        required: true
+        type: string
       tag_as_latest:
         description: 'tag as latest?'
         required: true
@@ -21,7 +25,7 @@ jobs:
         cache: 'npm'
     - name: environment variables
       run: |
-        echo "REPOSITORY_NAME=lsnova/animalhelper.web" >> $GITHUB_ENV
+        echo "REPOSITORY_NAME=${{inputs.repository}}" >> $GITHUB_ENV
         echo "GIT_COMMIT=$(git rev-parse HEAD)" >> $GITHUB_ENV
         echo "BUILD_DATE=$(date  +%F\ %T\ %Z)" >> $GITHUB_ENV
         echo "DOCKER_VERSION=1.$(date +%y.%j.%H%M%S)" >> $GITHUB_ENV
