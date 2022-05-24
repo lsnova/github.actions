@@ -1,7 +1,7 @@
 name: Docker Image CI
 
 on:
-  workflow_dispatch:
+  workflow_call:
     inputs:
       tag_as_latest:
         description: 'tag as latest?'
