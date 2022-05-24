@@ -11,6 +11,10 @@ on:
         description: 'tag as latest?'
         required: true
         type: boolean
+      precompile:
+        description: 'precompile script'
+        required: false
+        type: string
 
 jobs:
   build:
@@ -22,7 +26,6 @@ jobs:
           distribution: 'temurin'
           java-version: '11'
           cache: 'maven'
-
       - name: docker login
         env:
           DOCKER_USER: ${{secrets.DOCKER_USER}}
@@ -30,8 +33,9 @@ jobs:
         run: |
           docker login -u $DOCKER_USER -p $DOCKER_PASSWORD
       - name: precompile bash
+        if: "${{ inputs.precompile != '' }}"
         run: |
-          sh ./.github/precompile.sh
+          sh ${{inputs.precompile}}
       - name: environment variables
         run: |
           echo "REPOSITORY_NAME=${{inputs.repository}}" >> $GITHUB_ENV
