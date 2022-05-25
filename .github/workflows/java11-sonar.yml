@@ -31,6 +31,6 @@ jobs:
       - name: check access
         shell: bash
         run: curl -v $SONARQUBE_HOST
-      - name: sonar
-        run: |
-          mvn clean package sonar:sonar -Dsonar.host.url=$SONARQUBE_HOST -Dsonar.login=$SONARQUBE_TOKEN -Dsonar.branch.name=$GITHUB_REF -Dsonar.scm.provider=git -Dsonar.java.binaries=target/classes
+#      - name: sonar
+#        run: |
+#          mvn clean package sonar:sonar -Dsonar.host.url=$SONARQUBE_HOST -Dsonar.login=$SONARQUBE_TOKEN -Dsonar.branch.name=$GITHUB_REF -Dsonar.scm.provider=git -Dsonar.java.binaries=target/classes
