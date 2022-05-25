@@ -1,0 +1,33 @@
+name: Sonar scan (Java11)
+
+on:
+  workflow_call:
+    inputs:
+      precompile:
+        description: 'precompile script'
+        required: false
+        type: string
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: '11'
+          cache: 'maven'
+      - name: precompile bash
+        if: "${{ inputs.precompile != '' }}"
+        run: |
+          sh ${{inputs.precompile}}
+      - name: environment variables
+        run: |
+          echo "SONARQUBE_HOST=${{secrets.SONARQUBE_HOST}}" >> $GITHUB_ENV
+          echo "SONARQUBE_TOKEN=${{secrets.SONARQUBE_TOKEN}}" >> $GITHUB_ENV
+          echo "GITHUB_REF=${GITHUB_REF:11}" >> $GITHUB_ENV
+        shell: bash
+      - name: sonar
+        run: |
+          mvn clean package sonar:sonar -Dsonar.host.url=$SONARQUBE_HOST -Dsonar.login=$SONARQUBE_TOKEN -Dsonar.branch.name=$GITHUB_REF -Dsonar.scm.provider=git -Dsonar.java.binaries=target/classes
