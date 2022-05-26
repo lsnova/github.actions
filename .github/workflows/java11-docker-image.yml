@@ -44,7 +44,7 @@ jobs:
               {
                 "id": "github-maven-pkg",
                 "username": "${{ secrets.MAVEN_PKG_GITHUB_USERNAME }}",
-                "password": "${{ secrets.MAVEN_PKG_GITHUB_USERNAME }}"
+                "password": "${{ secrets.MAVEN_PKG_GITHUB_PASSWORD }}"
               }
             ]
       - name: docker login
