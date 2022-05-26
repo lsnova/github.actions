@@ -27,14 +27,26 @@ jobs:
           distribution: 'temurin'
           java-version: '11'
           cache: 'maven'
-      - uses: s4u/maven-settings-action@v2.3.0
+      - uses: whelk-io/maven-settings-xml-action@v20
         with:
-          servers: |
-            [{
-                "id": "github-pkg",
+          repositories: >
+            [
+              {
+                "id": "github-maven-pkg",                
+                "url": "https://maven.pkg.github.com/lsnova/*",
+                "snapshots": {
+                  "enabled": "false"                
+                }
+              }
+            ]
+          servers: >
+            [
+              {
+                "id": "github-maven-pkg",
                 "username": "${{ secrets.MAVEN_PKG_GITHUB_USERNAME }}",
-                "password": "${{ secrets.MAVEN_PKG_GITHUB_PASSWORD }}"
-            }]          
+                "password": "${{ secrets.MAVEN_PKG_GITHUB_USERNAME }}"
+              }
+            ]
       - name: docker login
         env:
           DOCKER_USER: ${{secrets.DOCKER_USER}}
