@@ -21,25 +21,14 @@ jobs:
           distribution: 'temurin'
           java-version: '11'
           cache: 'maven'
-      - name: Cache SonarQube packages
-        uses: actions/cache@v1
-        with:
-          path: ~/.sonar/cache
-          key: ${{ runner.os }}-sonar
-          restore-keys: ${{ runner.os }}-sonar
       - name: precompile bash
         if: "${{ inputs.precompile != '' }}"
         run: |
           sh ${{inputs.precompile}}
-      - name: environment variables
-        run: |
-          echo "SONARQUBE_HOST=${{secrets.SONARQUBE_HOST}}" >> $GITHUB_ENV
-          echo "SONARQUBE_TOKEN=${{secrets.SONARQUBE_TOKEN}}" >> $GITHUB_ENV
-          echo "GITHUB_REF=${GITHUB_REF:11}" >> $GITHUB_ENV
-        shell: bash
-      - name: check access
-        shell: bash
-        run: curl -v $SONARQUBE_HOST
       - name: sonar
+        env:
+          SONAR_ORGANIZATION: ${{secrets.SONAR_ORGANIZATION}}
+          SONARQUBE_TOKEN: ${{secrets.SONAR_TOKEN}}
+          GITHUB_REF: ${ GITHUB_REF:11 }
         run: |
-          mvn clean package sonar:sonar -Dsonar.host.url=$SONARQUBE_HOST -Dsonar.login=$SONARQUBE_TOKEN -Dsonar.branch.name=$GITHUB_REF -Dsonar.scm.provider=git -Dsonar.java.binaries=target/classes
+          mvn clean package sonar:sonar -Dsonar.host.url=https://sonarcloud.io -Dsonar.login=$SONARQUBE_TOKEN -Dsonar.branch.name=$GITHUB_REF -Dsonar.scm.provider=git -Dsonar.java.binaries=target/classes -Dsonar.organization=$SONAR_ORGANIZATION
