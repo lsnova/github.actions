@@ -15,6 +15,7 @@ on:
         description: 'precompile script'
         required: false
         type: string
+        default: './.github/precompile.sh'
 
 jobs:
   build:
