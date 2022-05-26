@@ -7,7 +7,7 @@ on:
         description: 'project key'
         required: true
         type: string
-      precompile_file:
+      precompile:
         description: 'shell script'
         required: false
         type: string
@@ -34,7 +34,7 @@ jobs:
       - name: precompile bash
         shell: bash
         env:
-          PRECOMPILE_FILE: ${{inputs.precompile_file}}
+          PRECOMPILE_FILE: ${{inputs.precompile}}
         run: |
           if test -f "$PRECOMPILE_FILE"; then
             echo "running $PRECOMPILE_FILE"

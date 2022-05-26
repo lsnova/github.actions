@@ -33,9 +33,14 @@ jobs:
         run: |
           docker login -u $DOCKER_USER -p $DOCKER_PASSWORD
       - name: precompile bash
-        if: "${{ inputs.precompile != '' }}"
+        shell: bash
+        env:
+          PRECOMPILE_FILE: ${{inputs.precompile}}
         run: |
-          sh ${{inputs.precompile}}
+          if test -f "$PRECOMPILE_FILE"; then
+            echo "running $PRECOMPILE_FILE"
+            sh $PRECOMPILE_FILE
+          fi
       - name: environment variables
         run: |
           echo "REPOSITORY_NAME=${{inputs.repository}}" >> $GITHUB_ENV
