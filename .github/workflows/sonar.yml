@@ -7,6 +7,11 @@ on:
         description: 'project key'
         required: true
         type: string
+      precompile_file:
+        description: 'shell script'
+        required: false
+        type: string
+        default: './.github/precompile.sh'
 
 jobs:
   build:
@@ -26,6 +31,15 @@ jobs:
         with:
           path: ~/.sonar/cache
           key: ${{ runner.os }}-sonar
+      - name: precompile bash
+        shell: bash
+        env:
+          PRECOMPILE_FILE: ${{inputs.precompile_file}}
+        run: |
+          if test -f "$PRECOMPILE_FILE"; then
+            echo "running $PRECOMPILE_FILE"
+            sh $PRECOMPILE_FILE
+          fi
       - name: Build and analyze
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  
