@@ -27,6 +27,14 @@ jobs:
           distribution: 'temurin'
           java-version: '11'
           cache: 'maven'
+      - uses: s4u/maven-settings-action@v2.3.0
+        with:
+          servers: |
+            [{
+                "id": "github-pkg",
+                "username": "${{ secrets.MAVEN_PKG_GITHUB_USERNAME }}",
+                "password": "${{ secrets.MAVEN_PKG_GITHUB_PASSWORD }}"
+            }]          
       - name: docker login
         env:
           DOCKER_USER: ${{secrets.DOCKER_USER}}
@@ -52,7 +60,7 @@ jobs:
         shell: bash
       - name: mvn package
         run: |
-          mvn clean package -U -Ddeploy.commit=$GIT_COMMIT -Ddeploy.docker=$DOCKER_VERSION -Ddeploy.version=$MVN_VERSION -Ddeploy.date="$BUILD_DATE"
+          mvn clean package -B -U -Ddeploy.commit=$GIT_COMMIT -Ddeploy.docker=$DOCKER_VERSION -Ddeploy.version=$MVN_VERSION -Ddeploy.date="$BUILD_DATE"
       - name: build docker image
         run: |
           docker build . --file Dockerfile --tag $REPOSITORY_NAME:$DOCKER_VERSION
