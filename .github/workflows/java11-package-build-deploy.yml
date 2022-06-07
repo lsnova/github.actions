@@ -1,48 +1,33 @@
 name: Package build and deploy CI
 
 on:
-  workflow_call:
+  workflow_dispatch:
 
 jobs:
-  build:
+  publish:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-java@v3
         with:
-          distribution: 'temurin'
           java-version: '11'
-          cache: 'maven'
-      - uses: whelk-io/maven-settings-xml-action@v20
-        with:
-          repositories: >
-            [
-              {
-                "id": "github-maven-pkg",
-                "url": "https://maven.pkg.github.com/lsnova/*",
-                "snapshots": {
-                  "enabled": "true"
-                }
-              }
-            ]
-          servers: >
-            [
-              {
-                "id": "github-maven-pkg",
-                "username": "${{ secrets.MAVEN_PKG_GITHUB_USERNAME }}",
-                "password": "${{ secrets.MAVEN_PKG_GITHUB_PASSWORD }}"
-              }
-            ]
+          distribution: 'adopt'
+          server-id: github-maven-pkg
+          server-username: MAVEN_USERNAME
+          server-password: MAVEN_PASSWORD
       - name: environment variables
         run: |
-          echo "GIT_COMMIT=$(git rev-parse HEAD)" >> $GITHUB_ENV
-          echo "BUILD_DATE=$(date  +%F\ %T\ %Z)" >> $GITHUB_ENV
           echo "PACKAGE_NAME=$(mvn help:evaluate -Dexpression=project.artifactId -q -DforceStdout)" >> $GITHUB_ENV
           echo "PACKAGE_VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)" >> $GITHUB_ENV
         shell: bash
-      - name: mvn package and deploy module
-        run: |
-          mvn clean package deploy -B -U
+      - name: Publish package
+        run: mvn --batch-mode deploy
+        env:
+          MAVEN_USERNAME: ${{ secrets.MAVEN_PKG_GITHUB_USERNAME }}
+          MAVEN_PASSWORD: ${{ secrets.MAVEN_PKG_GITHUB_PASSWORD }}
       - name: Slack Notification
         uses: rtCamp/action-slack-notify@v2
         if: always()
