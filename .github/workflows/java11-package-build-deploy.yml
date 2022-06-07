@@ -1,4 +1,4 @@
-name: Package build and deploy CI
+name: Package build and publish CI
 
 on:
   workflow_call:
@@ -37,6 +37,6 @@ jobs:
           SLACK_ICON: https://github.com/lsnova.png?size=48
           SLACK_MESSAGE: ${{ env.PACKAGE_NAME }}:${{ env.PACKAGE_VERSION }}
           SLACK_FOOTER: lsn
-          SLACK_TITLE: 'Package build and deploy'
+          SLACK_TITLE: 'Package build and publish'
           SLACK_USERNAME: github
           MSG_MINIMAL: true
