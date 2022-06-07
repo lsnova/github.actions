@@ -24,7 +24,7 @@ jobs:
           echo "PACKAGE_VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)" >> $GITHUB_ENV
         shell: bash
       - name: Publish package
-        run: mvn --batch-mode deploy
+        run: mvn -B -U clean deploy
         env:
           MAVEN_USERNAME: ${{ secrets.MAVEN_PKG_GITHUB_USERNAME }}
           MAVEN_PASSWORD: ${{ secrets.MAVEN_PKG_GITHUB_PASSWORD }}
@@ -39,3 +39,4 @@ jobs:
           SLACK_FOOTER: lsn
           SLACK_TITLE: 'Package build and deploy'
           SLACK_USERNAME: github
+          MSG_MINIMAL: true
