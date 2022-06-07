@@ -1,5 +1,8 @@
 name: Package build and deploy CI
 
+on:
+  workflow_call:
+
 jobs:
   build:
     runs-on: ubuntu-latest
