@@ -35,7 +35,7 @@ jobs:
                 "id": "github-maven-pkg",                
                 "url": "https://maven.pkg.github.com/lsnova/*",
                 "snapshots": {
-                  "enabled": "false"                
+                  "enabled": "true"                
                 }
               }
             ]
