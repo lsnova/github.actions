@@ -13,7 +13,7 @@ on:
         type: boolean
       use_github_cache:
         description: 'use github cache?'
-        required: true
+        required: false
         default: true
         type: boolean
 jobs:
