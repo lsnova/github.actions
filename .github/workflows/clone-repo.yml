@@ -40,14 +40,14 @@ jobs:
         run: |
           mkdir output
           for FILE in `echo $COPY_LIST`; do
-            echo "processing $file"
+            echo "processing $FILE [cloning]"
             if [ -f "$FILE" ] || [ -d "$FILE" ]; then
               echo "$FILE exists"
-              mv $FILE output/          
+              mv $FILE output/
             fi
           done
           for FILE in `echo $IGNORE_LIST`; do
-            echo "processing $file [ignoring]"
+            echo "processing $FILE [ignoring]"
             if [ -f "output/$FILE" ] || [ -d "output/$FILE" ]; then
               echo "output/$FILE exists"
               rm -rf output/$FILE          
