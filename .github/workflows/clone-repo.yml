@@ -15,7 +15,7 @@ on:
       target_directory:
         description: 'target directory'
         required: false
-        default: '.'
+        default: ''
         type: string
       copy_list:
         description: 'list of files and directories to clone'
