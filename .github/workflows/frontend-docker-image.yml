@@ -19,7 +19,7 @@ on:
       npm_install_force:
         description: 'npm install --force?'
         required: false
-        default: false
+        default: true
         type: boolean
 jobs:
   build:
