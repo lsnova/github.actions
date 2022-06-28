@@ -35,7 +35,9 @@ jobs:
           SLACK_WEBHOOK: ${{secrets.SLACK_WEBHOOK}}
           SLACK_COLOR: ${{ job.status }}
           SLACK_ICON: https://github.com/lsnova.png?size=48
-          SLACK_MESSAGE: ${{ env.PACKAGE_NAME }}:${{ env.PACKAGE_VERSION }}
+          SLACK_MESSAGE: |
+            branch: ${{ env.GITHUB_REF }}
+            ${{ env.PACKAGE_NAME }}:${{ env.PACKAGE_VERSION }}
           SLACK_FOOTER: lsn
           SLACK_TITLE: 'Package build and publish'
           SLACK_USERNAME: github
