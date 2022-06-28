@@ -19,7 +19,7 @@ on:
       npm_install_force:
         description: 'npm install --force?'
         required: false
-        default: true
+        default: false
         type: boolean
 jobs:
   build:
@@ -51,7 +51,7 @@ jobs:
       run: |
         echo "{\"gitCommit\":\"$GIT_COMMIT\",\"buildDate\":\"$BUILD_DATE\",\"dockerVersion\":\"$DOCKER_VERSION\"}" > ./src/assets/version.json
     - name: npm install
-      if: ${{ github.event.inputs.npm_install_force != 'true' }}
+      if: ${{ github.event.inputs.npm_install_force == 'false' }}
       run: |
         npm install
     - name: npm install force
