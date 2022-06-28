@@ -49,6 +49,8 @@ jobs:
         echo "i: _${{ github.event.inputs.npm_install_force }}_"
         echo "j: _${{ inputs.npm_install_force }}_"
         echo "k: _${{ inputs.npm_install_force == 'true' }}_"
+        echo "l: _${{ inputs.npm_install_force == true }}_"
+        echo "l: _${{ inputs.npm_install_force }}_"
       shell: bash
     - name: create version.json
       run: |
