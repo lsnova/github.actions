@@ -22,6 +22,7 @@ jobs:
         run: |
           echo "PACKAGE_NAME=$(mvn help:evaluate -Dexpression=project.artifactId -q -DforceStdout)" >> $GITHUB_ENV
           echo "PACKAGE_VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)" >> $GITHUB_ENV
+          echo "GITHUB_REF=$GITHUB_REF" >> $GITHUB_ENV
         shell: bash
       - name: Publish package
         run: mvn -B -U clean deploy

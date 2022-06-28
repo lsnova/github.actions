@@ -69,6 +69,7 @@ jobs:
           echo "MVN_VERSION=1.0.0" >> $GITHUB_ENV
           echo "BUILD_DATE=$(date  +%F\ %T\ %Z)" >> $GITHUB_ENV
           echo "DOCKER_VERSION=1.$(date +%y.%j.%H%M%S)" >> $GITHUB_ENV
+          echo "GITHUB_REF=$GITHUB_REF" >> $GITHUB_ENV
         shell: bash
       - name: mvn package
         run: |
