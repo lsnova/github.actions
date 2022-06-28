@@ -30,13 +30,13 @@ jobs:
         persist-credentials: false
     - name: setup node with cache
       uses: actions/setup-node@v3
-      if: ${{ github.event.inputs.use_github_cache == 'true' }}
+      if: ${{ inputs.use_github_cache == 'true' }}
       with:
         node-version: 16
         cache: 'npm'
     - name: setup node without cache
       uses: actions/setup-node@v3
-      if: ${{ github.event.inputs.use_github_cache != 'true' }}
+      if: ${{ inputs.use_github_cache != 'true' }}
       with:
         node-version: 16
     - name: environment variables
@@ -51,11 +51,11 @@ jobs:
       run: |
         echo "{\"gitCommit\":\"$GIT_COMMIT\",\"buildDate\":\"$BUILD_DATE\",\"dockerVersion\":\"$DOCKER_VERSION\"}" > ./src/assets/version.json
     - name: npm install
-      if: ${{ github.event.inputs.npm_install_force == 'false' }}
+      if: ${{ inputs.npm_install_force == 'false' }}
       run: |
         npm install
     - name: npm install force
-      if: ${{ github.event.inputs.npm_install_force == 'true' }}
+      if: ${{ inputs.npm_install_force == 'true' }}
       run: |
         npm install --force
     - name: ng build
@@ -74,7 +74,7 @@ jobs:
       run: |
         docker push $REPOSITORY_NAME:$DOCKER_VERSION
     - name: push latest image
-      if: ${{ github.event.inputs.tag_as_latest == 'true' }}
+      if: ${{ inputs.tag_as_latest == 'true' }}
       run: |
         docker tag $REPOSITORY_NAME:$DOCKER_VERSION $REPOSITORY_NAME:latest
         docker push $REPOSITORY_NAME:latest
