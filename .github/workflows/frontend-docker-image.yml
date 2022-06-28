@@ -14,12 +14,10 @@ on:
       use_github_cache:
         description: 'use github cache?'
         required: false
-        default: true
         type: boolean
       npm_install_force:
         description: 'npm install --force?'
-        required: false
-        default: false
+        required: true
         type: boolean
 jobs:
   build:
@@ -30,13 +28,13 @@ jobs:
         persist-credentials: false
     - name: setup node with cache
       uses: actions/setup-node@v3
-      if: ${{ inputs.use_github_cache == 'true' }}
+      if: ${{ inputs.use_github_cache == true }}
       with:
         node-version: 16
         cache: 'npm'
     - name: setup node without cache
       uses: actions/setup-node@v3
-      if: ${{ inputs.use_github_cache != 'true' }}
+      if: ${{ inputs.use_github_cache != true }}
       with:
         node-version: 16
     - name: environment variables
@@ -46,21 +44,16 @@ jobs:
         echo "BUILD_DATE=$(date  +%F\ %T\ %Z)" >> $GITHUB_ENV
         echo "DOCKER_VERSION=1.$(date +%y.%j.%H%M%S)" >> $GITHUB_ENV
         echo "GITHUB_REF=$GITHUB_REF" >> $GITHUB_ENV
-        echo "i: _${{ github.event.inputs.npm_install_force }}_"
-        echo "j: _${{ inputs.npm_install_force }}_"
-        echo "k: _${{ inputs.npm_install_force == 'true' }}_"
-        echo "l: _${{ inputs.npm_install_force == true }}_"      
-        echo "l: _${{ inputs.npm_install_force }}_"
       shell: bash
     - name: create version.json
       run: |
         echo "{\"gitCommit\":\"$GIT_COMMIT\",\"buildDate\":\"$BUILD_DATE\",\"dockerVersion\":\"$DOCKER_VERSION\"}" > ./src/assets/version.json
     - name: npm install
-      if: ${{ inputs.npm_install_force == 'false' }}
+      if: ${{ inputs.npm_install_force == false }}
       run: |
         npm install
     - name: npm install force
-      if: ${{ inputs.npm_install_force == 'true' }}
+      if: ${{ inputs.npm_install_force == true }}
       run: |
         npm install --force
     - name: ng build
@@ -79,7 +72,7 @@ jobs:
       run: |
         docker push $REPOSITORY_NAME:$DOCKER_VERSION
     - name: push latest image
-      if: ${{ inputs.tag_as_latest == 'true' }}
+      if: ${{ inputs.tag_as_latest == true }}
       run: |
         docker tag $REPOSITORY_NAME:$DOCKER_VERSION $REPOSITORY_NAME:latest
         docker push $REPOSITORY_NAME:latest
