@@ -81,7 +81,7 @@ jobs:
         run: |
           docker push $REPOSITORY_NAME:$DOCKER_VERSION
       - name: push latest image
-        if: ${{ github.event.inputs.tag_as_latest == 'true' }}
+        if: inputs.tag_as_latest == true
         run: |
           docker tag $REPOSITORY_NAME:$DOCKER_VERSION $REPOSITORY_NAME:latest
           docker push $REPOSITORY_NAME:latest
