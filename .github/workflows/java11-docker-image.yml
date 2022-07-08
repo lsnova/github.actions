@@ -67,8 +67,8 @@ jobs:
           echo "REPOSITORY_NAME=${{inputs.repository}}" >> $GITHUB_ENV
           echo "GIT_COMMIT=$(git rev-parse HEAD)" >> $GITHUB_ENV
           echo "MVN_VERSION=1.0.0" >> $GITHUB_ENV
-          echo "BUILD_DATE=$(date  +%F\ %T\ %Z)" >> $GITHUB_ENV
-          echo "DOCKER_VERSION=1.$(date +%y.%j.%H%M%S)" >> $GITHUB_ENV
+          echo "BUILD_DATE=$(TZ=':Europe/Warsaw' date  +%F\ %T\ %Z)" >> $GITHUB_ENV
+          echo "DOCKER_VERSION=1.$(TZ=':Europe/Warsaw' date +%y.%j.%H%M%S)" >> $GITHUB_ENV
           echo "GITHUB_REF=$GITHUB_REF" >> $GITHUB_ENV
         shell: bash
       - name: mvn package
