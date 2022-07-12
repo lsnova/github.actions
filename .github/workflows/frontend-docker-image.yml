@@ -97,8 +97,8 @@ jobs:
         SLACK_COLOR: ${{ job.status }}
         SLACK_ICON: https://github.com/lsnova.png?size=48
         SLACK_MESSAGE: |
-          branch: ${{ env.GITHUB_REF }}
-          ${{ env.REPOSITORY_NAME }}:${{ env.DOCKER_VERSION }} - ${{ job.status }}
+          branch: *${{ env.GITHUB_REF }}*
+          ${{ env.REPOSITORY_NAME }}:${{ env.DOCKER_VERSION }} - *${{ job.status }}*
         SLACK_FOOTER: lsn
         SLACK_TITLE: 'Docker Image Build'
         SLACK_USERNAME: github
