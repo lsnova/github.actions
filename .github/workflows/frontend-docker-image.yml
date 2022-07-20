@@ -46,7 +46,7 @@ jobs:
       with:
         node-version: 16
     - name: set ssh key
-      uses: webfactory/ssh-agent@v0.2.0
+      uses: webfactory/ssh-agent@v0.5.4
       with:
         ssh-private-key: ${{ secrets.JENKINS_SSH_KEY }}
     - name: environment variables
