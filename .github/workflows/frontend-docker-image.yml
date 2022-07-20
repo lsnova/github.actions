@@ -45,6 +45,10 @@ jobs:
       if: inputs.use_github_cache == false
       with:
         node-version: 16
+    - name: set ssh key
+      uses: webfactory/ssh-agent@v0.2.0
+      with:
+        ssh-private-key: ${{ secrets.JENKINS_SSH_KEY }}
     - name: environment variables
       run: |
         echo "REPOSITORY_NAME=${{inputs.repository}}" >> $GITHUB_ENV
