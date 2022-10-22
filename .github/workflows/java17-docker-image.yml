@@ -27,6 +27,10 @@ jobs:
           distribution: 'temurin'
           java-version: '17'
           cache: 'maven'
+      - name: java / mvn version
+        run: |
+          java -version
+          mvn -v
       - uses: whelk-io/maven-settings-xml-action@v20
         with:
           repositories: >
