@@ -11,6 +11,14 @@ on:
         description: 'tag as latest?'
         required: true
         type: boolean
+      java_version:
+        description: 'print java / mvn version?'
+        default: false
+        type: boolean
+      dependency_tree:
+        description: 'print mvn dependency tree?'
+        default: false
+        type: boolean
       precompile:
         description: 'precompile script'
         required: false
@@ -28,9 +36,14 @@ jobs:
           java-version: '17'
           cache: 'maven'
       - name: java / mvn version
+        if: inputs.java_version == true
         run: |
           java -version
           mvn -v
+      - name: dependency tree
+        if: inputs.dependency_tree == true
+        run: |
+          mvn dependency:tree
       - uses: whelk-io/maven-settings-xml-action@v20
         with:
           repositories: >
