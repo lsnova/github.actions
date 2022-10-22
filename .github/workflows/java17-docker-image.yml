@@ -35,15 +35,6 @@ jobs:
           distribution: 'temurin'
           java-version: '17'
           cache: 'maven'
-      - name: java / mvn version
-        if: inputs.java_version == true
-        run: |
-          java -version
-          mvn -v
-      - name: dependency tree
-        if: inputs.dependency_tree == true
-        run: |
-          mvn dependency:tree
       - uses: whelk-io/maven-settings-xml-action@v20
         with:
           repositories: >
@@ -64,6 +55,15 @@ jobs:
                 "password": "${{ secrets.MAVEN_PKG_GITHUB_PASSWORD }}"
               }
             ]
+      - name: java / mvn version
+        if: inputs.java_version == true
+        run: |
+          java -version
+          mvn -v
+      - name: dependency tree
+        if: inputs.dependency_tree == true
+        run: |
+          mvn dependency:tree
       - name: docker login
         env:
           DOCKER_USER: ${{secrets.DOCKER_USER}}
