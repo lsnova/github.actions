@@ -3,20 +3,20 @@ name: Frontend Tests
 on:
   workflow_call:
     inputs:
-        node_version:
-            description: 'node version'
-            required: true
-            type: string
+      node_version:
+        description: 'node version'
+        required: true
+        type: string
 
 jobs:
-    build:
-        runs-on: ubuntu-latest
-        steps:
-            - uses: actions/checkout@v3
-            - name: Use Node.js ${{ inputs.node_version }}
-              uses: actions/setup-node@v3
-              with:
-                  node-version: ${{ inputs.node_version }}
-                  cache: 'npm'
-            - run: npm ci
-            - run: npm run test:prod
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Use Node.js ${{ inputs.node_version }}
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ inputs.node_version }}
+          cache: 'npm'
+      - run: npm ci
+      - run: npm run test:prod
