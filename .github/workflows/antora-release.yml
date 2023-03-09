@@ -18,8 +18,8 @@ jobs:
         env:
           VERSION: ${{github.event.inputs.version}}
         run: |          
-          echo "::set-output name=date::$(date +'%Y-%m-%d')"
-          echo "::set-output name=branch_name::release/$VERSION"
+          echo "date=$(date +'%Y-%m-%d')" >> $GITHUB_OUTPUT
+          echo "branch_name=release/$VERSION" >> $GITHUB_OUTPUT
       - name: check if branch exists
         shell: bash {0}
         run: |          
