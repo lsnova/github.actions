@@ -1,0 +1,54 @@
+name: Release Antora version
+
+on:
+  workflow_call:
+    inputs:
+      version:
+        description: 'version'
+        required: true
+        type: string
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: get current date
+        id: variables
+        env:
+          VERSION: ${{github.event.inputs.version}}
+        run: |          
+          echo "::set-output name=date::$(date +'%Y-%m-%d')"
+          echo "::set-output name=branch_name::release/$VERSION"
+      - name: check if branch exists
+        shell: bash {0}
+        run: |          
+          git ls-remote --exit-code origin ${{ steps.variables.outputs.branch_name }}
+          EXIT_CODE=$?
+          if [ $EXIT_CODE -eq 0 ]; then
+            echo "branch ${{ steps.variables.outputs.branch_name }} already exists"
+            exit 1
+          fi
+      - name: update antora.yml
+        uses: fjogeleit/yaml-update-action@main
+        with:
+          valueFile: 'docs/antora.yml'
+          propertyPath: 'version'
+          value: ${{github.event.inputs.version}}
+          commitChange: false
+      - name: update antora.yml
+        uses: fjogeleit/yaml-update-action@main
+        with:
+          valueFile: 'docs/antora.yml'
+          propertyPath: 'display_version'
+          value: ${{github.event.inputs.version}} (${{ steps.variables.outputs.date }})
+          commitChange: false
+      - name: commit and push branch
+        run: |
+          git config --global user.email "noreply@lsn.io"
+          git config --global user.name "GitHub Action"
+          git branch ${{ steps.variables.outputs.branch_name }}
+          git checkout ${{ steps.variables.outputs.branch_name }}
+          git add docs/antora.yml
+          git commit -m "update antora.yml"
+          git push origin ${{ steps.variables.outputs.branch_name }}
