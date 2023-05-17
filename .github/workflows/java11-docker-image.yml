@@ -27,7 +27,7 @@ jobs:
           distribution: 'temurin'
           java-version: '11'
           cache: 'maven'
-      - uses: whelk-io/maven-settings-xml-action@v20
+      - uses: whelk-io/maven-settings-xml-action@v21
         with:
           repositories: >
             [
@@ -86,7 +86,7 @@ jobs:
           docker tag $REPOSITORY_NAME:$DOCKER_VERSION $REPOSITORY_NAME:latest
           docker push $REPOSITORY_NAME:latest
       - name: create tag
-        uses: actions/github-script@v5
+        uses: actions/github-script@v6
         with:
           script: |
             github.rest.git.createRef({
