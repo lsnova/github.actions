@@ -103,7 +103,7 @@ jobs:
           docker tag $REPOSITORY_NAME:$DOCKER_VERSION $REPOSITORY_NAME:latest
           docker push $REPOSITORY_NAME:latest
       - name: create tag
-        uses: actions/github-script@v5
+        uses: actions/github-script@v6.4.1
         with:
           script: |
             github.rest.git.createRef({
