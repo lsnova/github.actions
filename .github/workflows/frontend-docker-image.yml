@@ -7,11 +7,6 @@ on:
         description: 'repository'
         required: true
         type: string
-      tag_as_latest:
-        description: 'tag as latest?'
-        required: false
-        default: false
-        type: boolean
       use_github_cache:
         description: 'use github cache?'
         required: false
@@ -97,11 +92,6 @@ jobs:
     - name: docker push image
       run: |
         docker push $REPOSITORY_NAME:$DOCKER_VERSION
-    - name: push latest image
-      if: inputs.tag_as_latest == true
-      run: |
-        docker tag $REPOSITORY_NAME:$DOCKER_VERSION $REPOSITORY_NAME:latest
-        docker push $REPOSITORY_NAME:latest
     - name: create tag
       uses: actions/github-script@v5
       with:
