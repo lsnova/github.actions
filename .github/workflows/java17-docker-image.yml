@@ -7,10 +7,6 @@ on:
         description: 'repository'
         required: true
         type: string
-      tag_as_latest:
-        description: 'tag as latest?'
-        required: true
-        type: boolean
       java_version:
         description: 'print java / mvn version?'
         default: false
@@ -97,11 +93,6 @@ jobs:
       - name: docker push image
         run: |
           docker push $REPOSITORY_NAME:$DOCKER_VERSION
-      - name: push latest image
-        if: inputs.tag_as_latest == true
-        run: |
-          docker tag $REPOSITORY_NAME:$DOCKER_VERSION $REPOSITORY_NAME:latest
-          docker push $REPOSITORY_NAME:latest
       - name: create tag
         uses: actions/github-script@v6.4.1
         with:
