@@ -35,6 +35,9 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    outputs:
+      docker_version: ${{ steps.variables.outputs.DOCKER_VERSION }}
+      github_ref: ${{ steps.variables.outputs.GITHUB_REF }}
     steps:
     - uses: actions/checkout@v3
       with:
@@ -54,13 +57,16 @@ jobs:
       uses: webfactory/ssh-agent@v0.7.0
       with:
         ssh-private-key: ${{ secrets.JENKINS_SSH_KEY }}
-    - name: environment variables
+    - id: variables
+      name: environment variables
       run: |
         echo "REPOSITORY_NAME=${{inputs.repository}}" >> $GITHUB_ENV
         echo "GIT_COMMIT=$(git rev-parse HEAD)" >> $GITHUB_ENV
         echo "BUILD_DATE=$(TZ=':Europe/Warsaw' date +%F\ %T\ %Z)" >> $GITHUB_ENV
         echo "DOCKER_VERSION=1.$(TZ=':Europe/Warsaw' date +%y.%j.%H%M%S)" >> $GITHUB_ENV
         echo "GITHUB_REF=$GITHUB_REF" >> $GITHUB_ENV
+        echo "GITHUB_REF=$GITHUB_REF" >> "$GITHUB_OUTPUT"
+        echo "DOCKER_VERSION=$DOCKER_VERSION" >> "$GITHUB_OUTPUT"
       shell: bash
     - name: create version.json
       run: |
