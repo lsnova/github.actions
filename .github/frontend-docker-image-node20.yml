@@ -1,0 +1,125 @@
+name: Docker Image CI
+
+on:
+  workflow_call:
+    inputs:
+      repository:
+        description: 'repository'
+        required: true
+        type: string
+      use_github_cache:
+        description: 'use github cache?'
+        required: false
+        default: true
+        type: boolean
+      npm_install_flags:
+        description: 'npm flags?'
+        required: false
+        default: ""
+        type: string
+      ng_build_flags:
+        description: 'ng build flags?'
+        required: false
+        default: ""
+        type: string
+      npm_install_force:
+        description: 'npm install --force?'
+        required: false
+        default: false
+        type: boolean
+      ng_test:
+        description: 'ng test?'
+        required: false
+        default: false
+        type: boolean
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    outputs:
+      docker_version: ${{ steps.variables.outputs.DOCKER_VERSION }}
+      github_ref: ${{ steps.variables.outputs.GITHUB_REF }}
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        node-version: 20
+        persist-credentials: false
+    - name: setup node with cache
+      uses: actions/setup-node@v4
+      if: inputs.use_github_cache == true
+      with:
+        node-version: 20
+        cache: 'npm'
+    - name: setup node without cache
+      uses: actions/setup-node@v4
+      if: inputs.use_github_cache == false
+      with:
+        node-version: 20
+    - name: set ssh key
+      uses: webfactory/ssh-agent@v0.7.0
+      with:
+        node-version: 20
+        ssh-private-key: ${{ secrets.JENKINS_SSH_KEY }}
+    - id: variables
+      name: environment variables
+      run: |
+        echo "REPOSITORY_NAME=${{inputs.repository}}" >> $GITHUB_ENV
+        echo "GIT_COMMIT=$(git rev-parse HEAD)" >> $GITHUB_ENV
+        echo "BUILD_DATE=$(TZ=':Europe/Warsaw' date +%F\ %T\ %Z)" >> $GITHUB_ENV
+        echo "DOCKER_VERSION=1.$(TZ=':Europe/Warsaw' date +%y.%j.%H%M%S)" >> $GITHUB_ENV
+        echo "GITHUB_REF=$GITHUB_REF" >> $GITHUB_ENV
+        echo "GITHUB_REF=$GITHUB_REF" >> "$GITHUB_OUTPUT"
+        echo "DOCKER_VERSION=$DOCKER_VERSION" >> "$GITHUB_OUTPUT"
+      shell: bash
+    - name: create version.json
+      run: |
+        echo "{\"gitCommit\":\"$GIT_COMMIT\",\"buildDate\":\"$BUILD_DATE\",\"dockerVersion\":\"$DOCKER_VERSION\"}" > ./src/assets/version.json
+    - name: npm install
+      if: inputs.npm_install_force == false
+      run: |
+        npm install ${{inputs.npm_install_flags}}
+    - name: npm install force
+      if: inputs.npm_install_force == true
+      run: |
+        npm install --force ${{inputs.npm_install_flags}}
+    - name: ng test
+      if: inputs.ng_test == true
+      run: |
+        ./node_modules/.bin/ng test --browsers=ChromeHeadless --watch=false
+    - name: ng build
+      run: |
+        ./node_modules/.bin/ng build --configuration production ${{inputs.ng_build_flags}}
+    - name: docker login
+      env:
+          DOCKER_USER: ${{secrets.DOCKER_USER}}
+          DOCKER_PASSWORD: ${{secrets.DOCKER_PASSWORD}}
+      run: |
+          docker login -u $DOCKER_USER -p $DOCKER_PASSWORD
+    - name: build docker image
+      run: |
+        docker build . --file ./Dockerfile --tag $REPOSITORY_NAME:$DOCKER_VERSION
+    - name: docker push image
+      run: |
+        docker push $REPOSITORY_NAME:$DOCKER_VERSION
+    - name: create tag
+      uses: actions/github-script@v5
+      with:
+        script: |
+          github.rest.git.createRef({
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            ref: 'refs/tags/build_${{ env.DOCKER_VERSION }}',
+            sha: context.sha
+          })
+    - name: Slack Notification
+      uses: rtCamp/action-slack-notify@v2
+      if: always()
+      env:
+        SLACK_WEBHOOK: ${{secrets.SLACK_WEBHOOK}}
+        SLACK_COLOR: ${{ job.status }}
+        SLACK_ICON: https://github.com/lsnova.png?size=48
+        SLACK_MESSAGE: |
+          branch: *${{ env.GITHUB_REF }}*
+          ${{ env.REPOSITORY_NAME }}:${{ env.DOCKER_VERSION }} - *${{ job.status }}*
+        SLACK_FOOTER: lsn
+        SLACK_TITLE: 'Docker Image Build'
+        SLACK_USERNAME: github
