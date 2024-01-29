@@ -41,19 +41,15 @@ jobs:
     steps:
     - uses: actions/checkout@v4
       with:
-        node-version: 20
         persist-credentials: false
     - name: setup node with cache
       uses: actions/setup-node@v4
       if: inputs.use_github_cache == true
       with:
-        node-version: 20
         cache: 'npm'
     - name: setup node without cache
       uses: actions/setup-node@v4
       if: inputs.use_github_cache == false
-      with:
-        node-version: 20
     - name: set ssh key
       uses: webfactory/ssh-agent@v0.7.0 # todo: change ver when node20 will be supported
       with:
