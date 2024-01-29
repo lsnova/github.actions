@@ -55,9 +55,8 @@ jobs:
       with:
         node-version: 20
     - name: set ssh key
-      uses: webfactory/ssh-agent@v0.7.0
+      uses: webfactory/ssh-agent@v0.7.0 # todo: change ver when node20 will be supported
       with:
-        node-version: 20
         ssh-private-key: ${{ secrets.JENKINS_SSH_KEY }}
     - id: variables
       name: environment variables
