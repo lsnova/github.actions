@@ -42,8 +42,10 @@ jobs:
           for FILE in `echo $COPY_LIST`; do
             echo "processing $FILE [cloning]"
             if [ -f "$FILE" ] || [ -d "$FILE" ]; then
+              DIRNAME=$(dirname $FILE)
+              mkdir -p $DIRNAME
               echo "$FILE exists"
-              mv $FILE output/
+              mv $FILE output/$DIRNAME/
             fi
           done
           for FILE in `echo $IGNORE_LIST`; do
