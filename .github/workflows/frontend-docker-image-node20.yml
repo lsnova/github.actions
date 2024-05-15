@@ -51,7 +51,7 @@ jobs:
       uses: actions/setup-node@v4
       if: inputs.use_github_cache == false
     - name: set ssh key
-      uses: webfactory/ssh-agent@v0.7.0 # todo: change ver when node20 will be supported
+      uses: webfactory/ssh-agent@v0.9.0
       with:
         ssh-private-key: ${{ secrets.JENKINS_SSH_KEY }}
     - id: variables
