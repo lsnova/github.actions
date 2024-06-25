@@ -1,0 +1,81 @@
+name: Clone repository
+
+on:
+  workflow_call:
+    inputs:
+      repository:
+        description: 'repository'
+        required: true
+        type: string
+      target_branch:
+        description: 'target branch'
+        required: false
+        default: 'master'
+        type: string
+      target_directory:
+        description: 'target directory'
+        required: false
+        default: ''
+        type: string
+      copy_list:
+        description: 'list of files and directories to clone'
+        required: true
+        type: string
+      ignore_list:
+        description: 'list of files and directories to ignore'
+        required: false
+        default: ''
+        type: string
+      commit_message:
+        description: 'commit message'
+        required: false
+        default: ''
+        type: string
+      tag_name:
+        description: 'tag of version'
+        required: false
+        default: ''
+        type: string
+
+jobs:
+  clone:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: remove files
+        shell: bash
+        env:
+          COPY_LIST: ${{inputs.copy_list}}
+          IGNORE_LIST: ${{inputs.ignore_list}}
+        run: |
+          mkdir output
+          for FILE in `echo $COPY_LIST`; do
+            echo "processing $FILE [cloning]"
+            if [ -f "$FILE" ] || [ -d "$FILE" ]; then
+              echo "$FILE exists"            
+              DIRNAME=$(dirname $FILE)
+              mkdir -p output/$DIRNAME/
+              mv $FILE output/$DIRNAME/
+            fi
+          done
+          for FILE in `echo $IGNORE_LIST`; do
+            echo "processing $FILE [ignoring]"
+            if [ -f "output/$FILE" ] || [ -d "output/$FILE" ]; then
+              echo "output/$FILE exists"
+              rm -rf output/$FILE          
+            fi
+          done
+      - name: Pushes to another repository
+        uses: lsnova/github-action-push-to-another-repository@main
+        env:
+          API_TOKEN_GITHUB: ${{ secrets.API_TOKEN_GITHUB }}
+        with:
+          source-directory: output/
+          destination-github-username: 'lsnova'
+          destination-repository-name: ${{inputs.repository}}
+          user-email: patryks@lsn.io
+          target-directory: ${{inputs.target_directory}}
+          target-branch: ${{inputs.target_branch}}
+          create-target-branch-if-needed: true
+          commit-message: ${{inputs.commit_message}}
+          tag-name: ${{inputs.tag_name}}
