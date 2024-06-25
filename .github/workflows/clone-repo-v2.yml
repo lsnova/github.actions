@@ -26,14 +26,16 @@ on:
         required: false
         default: ''
         type: string
+      tag_name:
+        description: 'tag name'
+        required: true
+        type: string
 
 jobs:
   clone:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - name: determine tag
-        run: "echo \"RELEASE_TAG=${GITHUB_REF#refs/tags/}\" >> $GITHUB_ENV"
       - name: remove files
         shell: bash
         env:
@@ -69,5 +71,5 @@ jobs:
           target-directory: ${{inputs.target_directory}}
           target-branch: ${{inputs.target_branch}}
           create-target-branch-if-needed: true
-          commit-message: ${{ env.RELEASE_TAG }}
-          tag-name: ${{ env.RELEASE_TAG }}
+          commit-message: ${{ inputs.tag_name }}
+          tag-name: ${{ inputs.tag_name }}
