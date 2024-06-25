@@ -26,16 +26,6 @@ on:
         required: false
         default: ''
         type: string
-      commit_message:
-        description: 'commit message'
-        required: false
-        default: ''
-        type: string
-      tag_name:
-        description: 'tag of version'
-        required: false
-        default: ''
-        type: string
 
 jobs:
   clone:
