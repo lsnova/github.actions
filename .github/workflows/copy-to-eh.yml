@@ -25,10 +25,6 @@ on:
         description: 'ref type'
         required: true
         type: string
-      tag_name:
-        description: 'tag name'
-        required: true
-        type: string
       copy_list:
         description: 'list of files and directories to clone'
         required: true
