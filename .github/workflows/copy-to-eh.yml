@@ -17,14 +17,6 @@ on:
         required: false
         default: ''
         type: string
-      event_name:
-        description: 'event name'
-        required: true
-        type: string
-      ref_type:
-        description: 'ref type'
-        required: true
-        type: string
       copy_list:
         description: 'list of files and directories to clone'
         required: true
@@ -42,7 +34,7 @@ jobs:
       RELEASE_TAG: ${{ steps.tags.outputs.RELEASE_TAG }}
     steps:
       - name: check is tag or release
-        if: ${{ inputs.event_name != 'release' && inputs.ref_type != 'tag' }}
+        if: ${{ github.event_name != 'release' && github.ref_type != 'tag' }}
         run: |
           echo "must be started from a tag or a release" 
           exit 1
