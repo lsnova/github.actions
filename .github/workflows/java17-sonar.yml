@@ -65,4 +65,4 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           PROJECT_KEY: ${{inputs.project_key}}
-        run: mvn -B -U verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=$PROJECT_KEY -Dsonar.host.url=https://sonarcloud.io -Dsonar.organization=lsnova
+        run: mvn -B -U verify org.sonarsource.scanner.maven:sonar-maven-plugin:4.0.0.4121:sonar -Dsonar.projectKey=$PROJECT_KEY -Dsonar.host.url=https://sonarcloud.io -Dsonar.organization=lsnova
