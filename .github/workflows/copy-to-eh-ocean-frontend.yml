@@ -61,11 +61,12 @@ jobs:
           ssh-private-key: ${{ secrets.JENKINS_SSH_KEY }}
       - name: npm install
         run: |
-          node ./.github/workflows/change-libs.js
+          curl -s https://raw.githubusercontent.com/lsnova/github.actions/master/scripts/change-libs.js > ./change-libs.js
+          node ./change-libs.js
           npm install
 
   clone-repository:
-    needs: bootstrap
+    needs: change-libs
     uses: ./.github/workflows/clone-repo-v2.yml
     secrets: inherit
     with:
