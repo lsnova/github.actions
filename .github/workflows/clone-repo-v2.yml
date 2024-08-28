@@ -30,12 +30,18 @@ on:
         description: 'tag name'
         required: true
         type: string
+      checkout:
+        description: 'should we checkout repository?'
+        required: false
+        default: true
+        type: boolean
 
 jobs:
   clone:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - if: inputs.checkout == true
+        uses: actions/checkout@v2
       - name: remove files
         shell: bash
         env:

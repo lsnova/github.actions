@@ -1,0 +1,78 @@
+name: Copy to EH Ocean Frontend
+
+on:
+  workflow_call:
+    inputs:
+      repository:
+        description: 'repository'
+        required: true
+        type: string
+      target_branch:
+        description: 'target branch'
+        required: false
+        default: 'master'
+        type: string
+      target_directory:
+        description: 'target directory'
+        required: false
+        default: ''
+        type: string
+      copy_list:
+        description: 'list of files and directories to clone'
+        required: true
+        type: string
+      ignore_list:
+        description: 'list of files and directories to ignore'
+        required: false
+        default: ''
+        type: string
+
+jobs:
+  bootstrap:
+    runs-on: ubuntu-latest
+    outputs:
+      RELEASE_TAG: ${{ steps.tags.outputs.RELEASE_TAG }}
+    steps:
+      - name: check is tag or release
+        if: ${{ github.event_name != 'release' && github.ref_type != 'tag' }}
+        run: |
+          echo "must be started from a tag or a release" 
+          exit 1
+      - id: tags
+        name: determine tag
+        run: |
+          echo "RELEASE_TAG=${GITHUB_REF#refs/tags/}" >> $GITHUB_OUTPUT
+
+  change-libs:
+    runs-on: ubuntu-latest
+    needs: bootstrap
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: setup node with cache
+        uses: actions/setup-node@v4
+        if: inputs.use_github_cache == true
+        with:
+          cache: 'npm'
+      - name: set ssh key
+        uses: webfactory/ssh-agent@v0.9.0
+        with:
+          ssh-private-key: ${{ secrets.JENKINS_SSH_KEY }}
+      - name: npm install
+        run: |
+          node ./.github/workflows/change-libs.js
+          npm install
+
+  clone-repository:
+    needs: bootstrap
+    uses: ./.github/workflows/clone-repo-v2.yml
+    secrets: inherit
+    with:
+      checkout: false
+      repository: ${{ inputs.repository }}
+      target_directory: ${{inputs.target_directory}}
+      target_branch: ${{ inputs.target_branch }}
+      tag_name: ${{ needs.bootstrap.outputs.RELEASE_TAG }}
+      copy_list: ${{ inputs.copy_list }}
+      ignore_list: ${{ inputs.ignore_list }}
