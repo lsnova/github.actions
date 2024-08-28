@@ -50,30 +50,65 @@ jobs:
       - uses: actions/checkout@v4
         with:
           persist-credentials: false
+
+
+  clone:
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout
+        uses: actions/checkout@v2
+
       - name: setup node with cache
         uses: actions/setup-node@v4
-        if: inputs.use_github_cache == true
         with:
           cache: 'npm'
+
       - name: set ssh key
         uses: webfactory/ssh-agent@v0.9.0
         with:
           ssh-private-key: ${{ secrets.JENKINS_SSH_KEY }}
+
       - name: npm install
         run: |
           curl -s https://raw.githubusercontent.com/lsnova/github.actions/master/scripts/change-libs.js > ./change-libs.js
           node ./change-libs.js
           npm install
 
-  clone-repository:
-    needs: change-libs
-    uses: ./.github/workflows/clone-repo-v2.yml
-    secrets: inherit
-    with:
-      checkout: false
-      repository: ${{ inputs.repository }}
-      target_directory: ${{inputs.target_directory}}
-      target_branch: ${{ inputs.target_branch }}
-      tag_name: ${{ needs.bootstrap.outputs.RELEASE_TAG }}
-      copy_list: ${{ inputs.copy_list }}
-      ignore_list: ${{ inputs.ignore_list }}
+      - name: remove files
+        shell: bash
+        env:
+          COPY_LIST: ${{inputs.copy_list}}
+          IGNORE_LIST: ${{inputs.ignore_list}}
+        run: |
+          mkdir output
+          for FILE in `echo $COPY_LIST`; do
+            echo "processing $FILE [cloning]"
+            if [ -f "$FILE" ] || [ -d "$FILE" ]; then
+              echo "$FILE exists"            
+              DIRNAME=$(dirname $FILE)
+              mkdir -p output/$DIRNAME/
+              mv $FILE output/$DIRNAME/
+            fi
+          done
+          for FILE in `echo $IGNORE_LIST`; do
+            echo "processing $FILE [ignoring]"
+            if [ -f "output/$FILE" ] || [ -d "output/$FILE" ]; then
+              echo "output/$FILE exists"
+              rm -rf output/$FILE          
+            fi
+          done
+
+      - name: Push to another repository
+        uses: lsnova/github-action-push-to-another-repository@main
+        env:
+          API_TOKEN_GITHUB: ${{ secrets.API_TOKEN_GITHUB }}
+        with:
+          source-directory: output/
+          destination-github-username: 'lsnova'
+          destination-repository-name: ${{inputs.repository}}
+          user-email: patryks@lsn.io
+          target-directory: ${{inputs.target_directory}}
+          target-branch: ${{inputs.target_branch}}
+          create-target-branch-if-needed: true
+          commit-message: ${{ needs.bootstrap.outputs.RELEASE_TAG }}
+          tag-name: ${{ needs.bootstrap.outputs.RELEASE_TAG }}
