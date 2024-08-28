@@ -15,8 +15,28 @@ const libs = {
             '15.10.1': 'manual_15.10.1',
             '15.10.6': 'manual_15.10.6'
         }
+    },
+    'occ': {
+        lsnPath: 'github:lsnova/ocean.components',
+        ehPath: 'github:lsnova/eh-sources.ocean.components',
+        backCompVersionMap: {
+            '15.5.14': 'release_15.5.14',
+            '15.5.13': 'release_15.5.13',
+            '15.4.15': 'manual_15.4.15',
+            '15.4.14': 'manual_15.4.14',
+            '15.4.13': 'manual_15.4.13',
+            '15.4.10': 'manual_15.4.10'
+        }
+    },
+    'ocs': {
+        lsnPath: 'github:lsnova/ocean.services',
+        ehPath: 'github:lsnova/eh-sources.ocean.services',
+        backCompVersionMap: {
+            '15.9.6': 'release_15.9.6',
+            '15.9.5': 'manual_15.9.5',
+            '15.9.1': 'manual_15.9.1'
+        }
     }
-    // @todo add occ and ocs data
 }
 
 function getLsnPath(currentVer, data) {
