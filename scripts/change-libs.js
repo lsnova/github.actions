@@ -47,4 +47,4 @@ Object.keys(libs).forEach(code => {
     console.log(`Switched ${depPath} to ${pkg.dependencies[depPath]}`);
 })
 
-fs.writeFileSync(path.join(__dirname, '/../../package.json'), JSON.stringify(pkg, null, 2));
+fs.writeFileSync(path.join(__dirname, '/package.json'), JSON.stringify(pkg, null, 2));
