@@ -2,7 +2,7 @@ const path = require("path");
 const fs = require('fs');
 
 const toLsn = process.argv[2] === 'to-lsn';
-const pkg = JSON.parse(fs.readFileSync(path.join(__dirname, '/../../package.json')).toString())
+const pkg = JSON.parse(fs.readFileSync(path.join(__dirname, '/package.json')).toString())
 const libs = {
     'ocsg': {
         lsnPath: 'github:lsnova/ocean.styleguide',
