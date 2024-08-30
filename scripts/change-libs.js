@@ -8,6 +8,7 @@ const libs = {
         lsnPath: 'github:lsnova/ocean.styleguide',
         ehPath: 'github:lsnova/eh-sources.ocean.styleguide',
         backCompVersionMap: {
+            '15.8.55': 'manual_15.8.55',
             '15.9.11': 'manual_15.9.11',
             '15.9.16': 'manual_15.9.16',
             '15.9.25': 'manual_15.9.25',
@@ -26,7 +27,8 @@ const libs = {
             '15.4.15': 'manual_15.4.15',
             '15.4.14': 'manual_15.4.14',
             '15.4.13': 'manual_15.4.13',
-            '15.4.10': 'manual_15.4.10'
+            '15.4.10': 'manual_15.4.10',
+            '15.3.20': 'manual_15.3.20'
         }
     },
     'ocs': {
@@ -36,7 +38,8 @@ const libs = {
             '15.9.6': 'release_15.9.6',
             '15.9.5': 'manual_15.9.5',
             '15.9.3': 'manual_15.9.3',
-            '15.9.1': 'manual_15.9.1'
+            '15.9.1': 'manual_15.9.1',
+            '15.6.32': 'manual_15.6.32'
         }
     }
 }
