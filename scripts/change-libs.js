@@ -22,6 +22,7 @@ const libs = {
         backCompVersionMap: {
             '15.5.14': 'release_15.5.14',
             '15.5.13': 'release_15.5.13',
+            '15.5.4': 'manual_15.5.4',
             '15.4.15': 'manual_15.4.15',
             '15.4.14': 'manual_15.4.14',
             '15.4.13': 'manual_15.4.13',
@@ -34,6 +35,7 @@ const libs = {
         backCompVersionMap: {
             '15.9.6': 'release_15.9.6',
             '15.9.5': 'manual_15.9.5',
+            '15.9.3': 'manual_15.9.3',
             '15.9.1': 'manual_15.9.1'
         }
     }
