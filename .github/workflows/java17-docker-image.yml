@@ -20,6 +20,11 @@ on:
         required: false
         type: string
         default: './.github/precompile.sh'
+      slack:
+        description: should notify slack
+        required: false
+        type: boolean
+        default: true
 
 jobs:
   build:
@@ -105,7 +110,7 @@ jobs:
             })
       - name: Slack Notification
         uses: rtCamp/action-slack-notify@v2
-        if: always()
+        if: inputs.slack == true
         env:
           SLACK_WEBHOOK: ${{secrets.SLACK_WEBHOOK}}
           SLACK_COLOR: ${{ job.status }}
